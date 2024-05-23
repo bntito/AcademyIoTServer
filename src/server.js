@@ -11,7 +11,21 @@ require('./config/mysql/configDB.js');
 // require('./config/mongo/configDB.js');
 
 app.use(morgan('dev'));
-app.use(cors());
+
+const allowedOrigins = [
+  'https://master--tubular-klepon-496e56.netlify.app',
+  'https://tubular-klepon-496e56.netlify.app'
+];
+app.use(cors({
+  origin: function (origin, callback) {
+    if (allowedOrigins.includes(origin) || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
