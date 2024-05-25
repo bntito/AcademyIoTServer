@@ -56,14 +56,21 @@ const delEnrollment = async (req, res) => {
 
 /* Agregar registro */
 const addEnrollment = async (req, res) => {
-  // const existItem = await enrollments.findOne({ where: { code: req.body.code } });
-  // if (existItem) {
-  //   return res
-  //     .status(400)
-  //     .json({
-  //       message: "El código indicado ya está registrado"
-  //     });
-  // }
+  const existItem = await enrollments.findOne({
+    where: {
+      [Op.and]: [
+        { course: req.body.course },
+        { student: req.body.student }
+      ]
+    }
+  });
+  if (existItem) {
+    return res
+    .status(400)
+    .json({
+      message: "El Estudiante ya está registrado en este Curso"
+    });
+  };
   const newEnrollment = {
     course: req.body.course,
     professor: req.body.professor,
@@ -87,13 +94,13 @@ const addEnrollment = async (req, res) => {
 /* Actualizar registro */
 const updateEnrollment = async (req, res) => {
   const id = parseInt(req.params.id);
+  const existItem = await enrollments.findOne({ where: { id: id } });
+  if (!existItem) {
+    return res.status(404).json({ message: "El registro no fue encontrado"});
+  }
   try {
-    const existItem = await enrollments.findOne({ where: { id: id } });
-    if (!existItem) {
-      return res.status(404).json({ message: "El registro no fue encontrado"});
-    }
     if (existItem.student == req.body.student) {
-      const duplicateItem = await enrollments.findOne({
+      const existItem = await enrollments.findOne({
         where: {
           [Op.and]: [
             { course: req.body.course },
@@ -101,8 +108,8 @@ const updateEnrollment = async (req, res) => {
           ]
         }
       });
-      if (duplicateItem) {
-        return res.status(400).json({ message: "El estudiante ya está registrado"});
+      if (existItem) {
+        return res.status(400).json({ message: "El Estudiante ya está registrado en este Curso"});
       }
     }
     const updatedEnrollment = {
