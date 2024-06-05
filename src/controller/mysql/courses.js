@@ -104,6 +104,7 @@ const addCourse = async (req, res) => {
   if (existItem) {
     return res.status(400).json({ message: "El código indicado ya está registrado" });
   }
+
   const newCourse = {
     code: req.body.code,
     name: req.body.name,
@@ -116,6 +117,7 @@ const addCourse = async (req, res) => {
     urlImg: req.body.urlImg,
     prominent: req.body.prominent
   };
+  
   try {
     const register = await courses.create(newCourse);
     res.status(201).json({
@@ -130,33 +132,33 @@ const addCourse = async (req, res) => {
 
 /* Actualizar registro */
 const updateCourse = async (req, res) => {
-  const id = parseInt(req.params.id);
-  await courses.findOne({ where: { id: req.params.id } })
-    .then((item) => {
-      if (item) {
-        let existCourse = {
-          code: req.body.code,
-          name: req.body.name,
-          description: req.body.description,
-          cost: req.body.cost,
-          condition: req.body.condition,
-          duration: req.body.duration,
-          qualification: req.body.qualification,
-          professors: req.body.professors,
-          urlImg: req.body.urlImg,
-          prominent: req.body.prominent
-        };
-        const item_data = item.update(existCourse).then(function () {
-          res.json({
-            dataApi: item_data,
-            message: "El registro fue Actualizado"
-          });
-        });
-      }
-    })
-    .catch((error) => {
-      res.status(500).json({ message: error.message });
+  try {
+    const existCourse = await courses.findOne({ where: { id: req.params.id } });
+    if (!existCourse) {
+      return res.status(404).json({ message: "El ID indicado no está registrado" });
+    }
+
+    const updateCourse = {
+      code: req.body.code,
+      name: req.body.name,
+      description: req.body.description,
+      cost: req.body.cost,
+      condition: req.body.condition,
+      duration: req.body.duration,
+      qualification: req.body.qualification,
+      professors: req.body.professors,
+      urlImg: req.body.urlImg,
+      prominent: req.body.prominent
+    };
+
+    const itemData = await existCourse.update(updateCourse);
+    res.status(200).json({
+      dataApi: itemData,
+      message: "El registro fue actualizado"
     });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
 module.exports = {

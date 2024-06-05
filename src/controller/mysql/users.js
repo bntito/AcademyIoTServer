@@ -65,10 +65,12 @@ const addUser = async (req, res) => {
       message: 'El email indicado ya está registrado'
     });
   };
+
   let passwordCrypt = '';
   if (req.body.password) {
     passwordCrypt = await bcrypt.hash(req.body.password, 10);
   }
+
   const newUsers = {
     name: req.body.name,
     lastname: req.body.lastname,
@@ -80,6 +82,7 @@ const addUser = async (req, res) => {
     role: req.body.role,
     status: req.body.status
   };
+
   try {
     const register = await users.create(newUsers);
     // await sendMail({
@@ -103,34 +106,38 @@ const addUser = async (req, res) => {
 
 /* Actualizar registro */
 const updateUser = async (req, res) => {
-  console.log('llego al update')
-  const id = parseInt(req.params.id);
-  await users.findOne({ where: { id: req.params.id } })
-  .then((item) => {
-      if (item) {
-        let existUsers = {
-          name: req.body.name,
-          lastname: req.body.lastname,
-          email: req.body.email,
-          password: req.body.password,
-          address: req.body.address,
-          city: req.body.city,
-          phone: req.body.phone,
-          role: req.body.role,
-          status: req.body.status
-        };
-        const item_data = item.update(existUsers).then(function () {
-          res.json({
-            dataApi: item_data,
-            message: "El registro fue Actualizado"
-          });
-        });
-      }
-    })
-    .catch((error) => {
-      res.status(500).json({ message: error.message });
+  try {
+    const existUsers = await users.findOne({ where: { id: req.params.id } });
+    if (!existUsers) {
+      return res.status(404).json({ message: "El ID indicado no está registrado"});
+    }
+
+    let passwordCrypt = '';
+    if (req.body.password) {
+      passwordCrypt = await bcrypt.hash(req.body.password, 10);
+    }
+
+    const updateUser = {
+      name: req.body.name,
+      lastname: req.body.lastname,
+      email: req.body.email,
+      password: passwordCrypt,
+      address: req.body.address,
+      city: req.body.city,
+      phone: req.body.phone,
+      role: req.body.role,
+      status: req.body.status
+    };
+
+    const itemData = await existUsers.update(updateUser);
+    res.status(200).json({
+      dataApi: itemData,
+      message: "El registro fue Actualizado"
     });
-  };
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 /* Login de usuarios */ 
 const loginUser = async (req, res) => {
@@ -195,7 +202,6 @@ const changePassword = async (req, res) => {
       }
       const newPasswordHash = await bcrypt.hash(req.body.newPassword, 10);
       user.password = newPasswordHash;
-      
       await user.save();
       return res.status(200).json({
         status: '200',

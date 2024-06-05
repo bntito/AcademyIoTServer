@@ -78,6 +78,7 @@ const addStudent = async (req, res) => {
   if (existItem) {
     return res.status(400).json({ message: "El DNI indicado ya está registrado" });
   }
+
   const newStudent = {
     dni: req.body.dni,
     name: req.body.name,
@@ -90,6 +91,7 @@ const addStudent = async (req, res) => {
     phone: req.body.phone,
     condition: req.body.condition
   };
+  
   try {
     const register = await students.create(newStudent);
     res.status(201).json({
@@ -104,33 +106,33 @@ const addStudent = async (req, res) => {
 
 /* Actualizar registro */
 const updateStudent = async (req, res) => {
-  const id = parseInt(req.params.id);
-  await students.findOne({ where: { id: req.params.id } })
-    .then((item) => {
-      if (item) {
-        let existStudent = {
-          dni: req.body.dni,
-          name: req.body.name,
-          lastname: req.body.lastname,
-          email: req.body.email,
-          password: req.body.password,
-          address: req.body.address,
-          birthday: req.body.birthday,
-          city: req.body.city,
-          phone: req.body.phone,
-          condition: req.body.condition
-        };
-        const item_data = item.update(existStudent).then(function () {
-          res.json({
-            dataApi: item_data,
-            message: "El registro fue Actualizado"
-          });
-        });
-      }
-    })
-    .catch((error) => {
-      res.status(500).json({ message: error.message });
+  try {
+    const existStudent = await students.findOne({ where: { id: req.params.id } });
+    if (!existStudent) {
+      return res.status(404).json({ message: "El ID indicado no está registrado" });
+    }
+
+    const updateStudent = {
+      dni: req.body.dni,
+      name: req.body.name,
+      lastname: req.body.lastname,
+      email: req.body.email,
+      password: req.body.password,
+      address: req.body.address,
+      birthday: req.body.birthday,
+      city: req.body.city,
+      phone: req.body.phone,
+      condition: req.body.condition
+    };
+
+    const itemData = await existStudent.update(updateStudent);
+    res.status(200).json({
+      dataApi: itemData,
+      message: "El registro fue Actualizado"
     });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
 module.exports = {

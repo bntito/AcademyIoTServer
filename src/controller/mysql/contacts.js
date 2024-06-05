@@ -5,12 +5,10 @@ const contacts = db.contacts;
 /* Conseguir registros */
 const getContacts = async (req, res) => {
   try {
-    await contacts.findAll().then((dataApi) => {
-      res.status(200).json({
-        dataApi: dataApi,
-        message: "Consulta exitosa" 
-      });
-      return;
+    const dataApi = await contacts.findAll();
+    res.status(200).json({
+      dataApi,
+      message: "Consulta exitosa"
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -62,6 +60,7 @@ const addContact = async (req, res) => {
   //       message: "El DNI indicado ya está registrado"
   //     });
   // }
+
   const newContact = {
     name: req.body.name,
     email: req.body.email,
@@ -70,6 +69,7 @@ const addContact = async (req, res) => {
     city: req.body.city,
     message: req.body.message
   };
+  
   try {
     const register = await contacts.create(newContact);
     res.status(201).json({
@@ -84,34 +84,31 @@ const addContact = async (req, res) => {
 
 /* Actualizar registro */
 const updateContact = async (req, res) => {
-  const id = parseInt(req.params.id);
-  await contacts.findOne({ where: { id: req.params.id } })
-    .then((item) => {
-      if (item) {
-        let existContact = {
-          dni: req.body.dni,
-          name: req.body.name,
-          lastname: req.body.lastname,
-          email: req.body.email,
-          password: req.body.password,
-          address: req.body.address,
-          birthday: req.body.birthday,
-          city: req.body.city,
-          phone: req.body.phone,
-          condition: req.body.condition
-        };
-        const item_data = item.update(existContact).then(function () {
-          res.json({
-            dataApi: item_data,
-            message: "El registro fue Actualizado"
-          });
-        });
-      }
-    })
-    .catch((error) => {
-      res.status(500).json({ message: error.message });
+  try {
+    const existItem = await contacts.findOne({ where: { id: req.params.id } });
+    if (!existItem) {
+      return res.status(404).json({ message: "El ID indicado no está registrado" });
+    }
+
+    const updatedContact = {
+      name: req.body.name,
+      email: req.body.email,
+      phone: req.body.phone,
+      email: req.body.email,
+      city: req.body.city,
+      message: req.body.message
+    };
+
+    const itemData = await existItem.update(updatedContact);
+    res.status(200).json({
+      dataApi: itemData,
+      message: "El registro fue actualizado"
     });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
+
 
 module.exports = {
   getContacts,

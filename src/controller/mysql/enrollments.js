@@ -71,6 +71,7 @@ const addEnrollment = async (req, res) => {
       message: "El Estudiante ya está registrado en este Curso"
     });
   };
+
   const newEnrollment = {
     course: req.body.course,
     professor: req.body.professor,
@@ -79,6 +80,7 @@ const addEnrollment = async (req, res) => {
     startDate: req.body.startDate,
     endDate: req.body.endDate
   };
+
   try {
     const register = await enrollments.create(newEnrollment);
     res.status(201).json({
@@ -112,6 +114,7 @@ const updateEnrollment = async (req, res) => {
         return res.status(400).json({ message: "El Estudiante ya está registrado en este Curso"});
       }
     }
+
     const updatedEnrollment = {
       course: req.body.course,
       professor: req.body.professor,
@@ -120,6 +123,7 @@ const updateEnrollment = async (req, res) => {
       startDate: req.body.startDate,
       endDate: req.body.endDate
     };
+    
     const updatedItem = await existItem.update(updatedEnrollment);
     res.json({
       dataApi: updatedItem,

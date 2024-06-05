@@ -79,6 +79,7 @@ const addProfessor = async (req, res) => {
   if (existItem) {
     return res.status(400).json({ message: "El DNI indicado ya está registrado" });
   }
+  
   const newProfessor = {
     dni: req.body.dni,
     name: req.body.name,
@@ -90,6 +91,7 @@ const addProfessor = async (req, res) => {
     phone: req.body.phone,
     condition: req.body.condition
   };
+
   try {
     const register = await professors.create(newProfessor);
     res.status(201).json({
@@ -104,32 +106,32 @@ const addProfessor = async (req, res) => {
 
 /* Actualizar registro */
 const updateProfessor = async (req, res) => {
-  const id = parseInt(req.params.id);
-  await professors.findOne({ where: { id: req.params.id } })
-    .then((item) => {
-      if (item) {
-        let existProfessor = {
-          dni: req.body.dni,
-          name: req.body.name,
-          lastname: req.body.lastname,
-          email: req.body.email,
-          password: req.body.password,
-          address: req.body.address,
-          city: req.body.city,
-          phone: req.body.phone,
-          condition: req.body.condition
-        };
-        const item_data = item.update(existProfessor).then(function () {
-          res.json({
-            dataApi: item_data,
-            message: "El registro fue Actualizado"
-          });
-        });
-      }
-    })
-    .catch((error) => {
-      res.status(500).json({ message: error.message });
+  try {
+    const existProfessor = await professors.findOne({ where: { id: req.params.id } });
+    if (!existProfessor) {
+      return res.status(404).json({ message: "El ID indicado no está registrado" });
+    }
+
+    const updateProfessor = {
+      dni: req.body.dni,
+      name: req.body.name,
+      lastname: req.body.lastname,
+      email: req.body.email,
+      password: req.body.password,
+      address: req.body.address,
+      city: req.body.city,
+      phone: req.body.phone,
+      condition: req.body.condition
+    };
+    
+    const itemData = await existProfessor.update(updateProfessor);
+    res.status(200).json({
+      dataApi: itemData,
+      message: "El registro fue Actualizado"
     });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
 module.exports = {
