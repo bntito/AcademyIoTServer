@@ -56,6 +56,29 @@ const delUser = async (req, res) => {
   }
 };
 
+/* Comparar contraseña inidicada Estudiante */
+const compareUser = async (req, res) => {
+  const user = await users.findOne({ where: { id: req.params.id}})
+  if (!user) {
+    return res.status(400).json({
+      status: '400',
+      message: 'El usuario logeado no corresponde con la información indicada'
+    });
+  };
+  const match = await bcrypt.compare(req.body.password, user.password);
+  if (!match) {
+    return res.status(400).json({
+      status: '400',
+      message: 'La contraseña no coincide con el usuario logeado'
+    });
+  } else {
+    return res.status(200).json({
+      status: '200',
+      message: 'Contraseña correcta'
+    });
+  };
+};
+
 /* Agregar registro */
 const addUser = async (req, res) => {
   const user = await users.findOne({ where: { email: req.body.email } });
@@ -175,6 +198,36 @@ const loginUser = async (req, res) => {
   };
 };
 
+/* Login de usuarios con google */
+const loginUserGoogle = async (req, res) => {
+  const loginGoogleEmail = req.body.loginGoogleEmail;
+  const user = await users.findOne({ where: { email: loginGoogleEmail } });
+  if (!user) {
+    return res.status(400).json({
+      status: '400',
+      message: 'Su cuenta de Google no está registrada'
+    });
+  } else {
+    const newRegister = {
+      id: user.id,
+      name: user.name,
+      lastname: user.lastname,
+      email: user.email,
+      phone: user.phone,
+      role: user.role,
+      status: user.status,
+      login: true,
+      token: generateJWT(user)
+    };
+    console.log('Nuevo ingreso de usuario:', newRegister);
+    return res.status(200).json({
+      status: '200',
+      dataApi: newRegister,
+      message: `Login exitoso \n Bienvenido ${user.name} ${user.lastname}`
+    });
+  };
+};
+
 /* Cambio de contraseña de usuarios */
 const changePassword = async (req, res) => {
   if (req.body.token) {
@@ -225,8 +278,10 @@ module.exports = {
   getUsers,
   getUser,
   delUser,
+  compareUser,
   addUser,
   updateUser,
   loginUser,
+  loginUserGoogle,
   changePassword
 };
