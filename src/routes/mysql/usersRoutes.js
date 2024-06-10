@@ -8,6 +8,8 @@ const {
   delUser,
   compareUser,
   addUser,
+  signupUserGoogle,
+  signupComplete,
   updateUser,
   loginUser,
   loginUserGoogle,
@@ -19,6 +21,8 @@ router.get('/user/:id', getUser);
 router.delete('/user/:id', delUser);
 router.post('/users/:id', compareUser);
 router.post('/user', addUser);
+router.post('/user/signupgoogle', signupUserGoogle);
+router.post('/user/signupcomplete', signupComplete);
 router.put('/user/:id', updateUser);
 router.post('/user/login', loginUser);
 router.post('/user/logingoogle', loginUserGoogle);

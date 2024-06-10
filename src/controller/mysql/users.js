@@ -3,6 +3,7 @@ const db = require('../../config/mysql/configDB');
 const bcrypt = require('bcrypt');
 const { generateJWT, verifyJWT } = require('../../services/usual');
 const { sendMail } = require('../../services/email');
+const { user } = require('../../config/mysql/config');
 const users = db.users;
 
 /* Conseguir registros */
@@ -121,6 +122,70 @@ const addUser = async (req, res) => {
       status: "201",
       dataApi: register,
       message: "El registro fue creado"
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const signupUserGoogle = async (req, res) => {
+  const user = await users.findOne({ where: { email: req.body.emailGoogle } });
+  if (user) {
+    return res.status(400).json({
+      status: "400",
+      message: "Cuenta de Correo Google ya registrada"
+    });
+  };
+
+  const parcialUserRegister = {
+    name: req.body.nameGoogle,
+    email: req.body.emailGoogle,
+    phone: req.body.phoneGoogle,
+  };
+
+  try {
+    const register = await users.create(parcialUserRegister);
+    res.status(201).json({
+      status: "201",
+      dataApi: register,
+      message: "El registro parcial fue creado"
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const signupComplete = async (req, res) => {
+  const userIncomplete = await users.findOne({ where: { email: req.body.emailGoogle } });
+  if (!userIncomplete) {
+    return res.status(404).json({
+      status: "404",
+      message: "El email indicado no está pre registrado"
+    });
+  };
+
+  let passwordCrypt = '';
+  if (req.body.password) {
+    passwordCrypt = await bcrypt.hash(req.body.password, 10);
+  }
+
+  const updateNewUser = {
+    name: userIncomplete.name,
+    lastname: userIncomplete.name,
+    email: userIncomplete.email,
+    password: passwordCrypt,
+    address: req.body.address,
+    phone: null,
+    city: req.body.city,
+    role: req.body.role,
+    status: req.body.status
+  };
+
+  try {
+    const userUpdate = await userIncomplete.update(updateNewUser);
+    res.status(200).json({
+      dataApi: userUpdate,
+      message: "El registro fue completado con éxito"
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -280,6 +345,8 @@ module.exports = {
   delUser,
   compareUser,
   addUser,
+  signupUserGoogle,
+  signupComplete,
   updateUser,
   loginUser,
   loginUserGoogle,
