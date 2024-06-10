@@ -8,7 +8,8 @@ module.exports = (sequelize, DataTypes) => {
     city: { type: DataTypes.STRING(100), allowNull: true },
     phone: { type: DataTypes.STRING(20), allowNull: true },
     role: { type: DataTypes.STRING(12), allowNull: true },
-    status: { type: DataTypes.STRING(12), allowNull: true }
+    status: { type: DataTypes.STRING(12), allowNull: true },
+    avatar: { type: DataTypes.STRING(100), allowNull: true }
   });
 
   return users;

@@ -140,7 +140,7 @@ const signupUserGoogle = async (req, res) => {
   const parcialUserRegister = {
     name: req.body.nameGoogle,
     email: req.body.emailGoogle,
-    phone: req.body.phoneGoogle,
+    avatar: req.body.photoGoogle
   };
 
   try {
@@ -175,10 +175,11 @@ const signupComplete = async (req, res) => {
     email: userIncomplete.email,
     password: passwordCrypt,
     address: req.body.address,
-    phone: null,
+    phone: req.body.phone,
     city: req.body.city,
     role: req.body.role,
-    status: req.body.status
+    status: req.body.status,
+    avatar: userIncomplete.avatar
   };
 
   try {
