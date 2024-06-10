@@ -65,11 +65,7 @@ const addEnrollment = async (req, res) => {
     }
   });
   if (existItem) {
-    return res
-    .status(400)
-    .json({
-      message: "El Estudiante ya está registrado en este Curso"
-    });
+    return res.status(400).json({ message: "El Estudiante ya está registrado en este Curso" });
   };
 
   const newEnrollment = {
@@ -100,30 +96,28 @@ const updateEnrollment = async (req, res) => {
   if (!existItem) {
     return res.status(404).json({ message: "El registro no fue encontrado"});
   }
-  try {
-    if (existItem.student == req.body.student) {
-      const existItem = await enrollments.findOne({
-        where: {
-          [Op.and]: [
-            { course: req.body.course },
-            { student: req.body.student }
-          ]
-        }
-      });
-      if (existItem) {
-        return res.status(400).json({ message: "El Estudiante ya está registrado en este Curso"});
-      }
-    }
 
-    const updatedEnrollment = {
+  const duplicateItem = await enrollments.findOne({
+    where: {
       course: req.body.course,
-      professor: req.body.professor,
       student: req.body.student,
-      shift: req.body.shift,
-      startDate: req.body.startDate,
-      endDate: req.body.endDate
-    };
-    
+      id: { [Op.ne]: id }
+    }
+  });
+  if (duplicateItem) {
+    return res.status(400).json({ message: "El Estudiante ya está registrado en este Curso" })
+  };
+
+  const updatedEnrollment = {
+    course: req.body.course,
+    professor: req.body.professor,
+    student: req.body.student,
+    shift: req.body.shift,
+    startDate: req.body.startDate,
+    endDate: req.body.endDate
+  };
+
+  try {
     const updatedItem = await existItem.update(updatedEnrollment);
     res.json({
       dataApi: updatedItem,
