@@ -207,6 +207,7 @@ const signupUserGoogle = async (req, res) => {
 
   const parcialUserRegister = {
     name: req.body.nameGoogle,
+    lastname: req.body.lastnameGoogle,
     email: req.body.emailGoogle,
     avatar: req.body.photoGoogle
   };
@@ -240,7 +241,7 @@ const signupComplete = async (req, res) => {
 
   const updateNewUser = {
     name: userIncomplete.name,
-    lastname: userIncomplete.name,
+    lastname: userIncomplete.lastname,
     email: userIncomplete.email,
     password: passwordCrypt,
     address: req.body.address,
