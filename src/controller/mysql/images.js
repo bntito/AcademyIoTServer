@@ -8,10 +8,9 @@ const courseImg = async (req, res) => {
   if (req.file) {
     filePath = `/images/courses/${req.file.filename}`;
   }
-  res
-  .send({
-    status: '200',
-    message: 'Imágen agregada',
+  res.send({
+    status: "200",
+    message: "Imágen agregada",
     urlImg: filePath
   });
 };

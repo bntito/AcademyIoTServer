@@ -1,8 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const { isAuthenticated, isRole } = require('../../middleware/auth');
+
 const multer = require('multer');
 const path = require('path');
+
 const diskStorage = multer.diskStorage({
   destination: path.join(__dirname, '../../public/images/courses'),
   filename: function (req, file, cb) {

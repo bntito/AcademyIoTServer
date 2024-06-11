@@ -3,7 +3,7 @@ const db = require('../../config/mysql/configDB');
 const bcrypt = require('bcrypt');
 const { generateJWT, verifyJWT } = require('../../services/usual');
 const { sendMail } = require('../../services/email');
-const { user } = require('../../config/mysql/config');
+const { user, password } = require('../../config/mysql/config');
 const users = db.users;
 
 /* Conseguir registros */
@@ -128,6 +128,74 @@ const addUser = async (req, res) => {
   }
 };
 
+/* Registrar con Email */
+const signupUserEmail = async (req, res) => {
+  const user = await users.findOne({ where: { email: req.body.email } });
+  if (user) {
+    return res.status(400).json({
+      status: "400",
+      message: "Cuenta de Correo Google ya registrada"
+    });
+  };
+
+  let passwordCrypt = '';
+  if (req.body.password) {
+    passwordCrypt = await bcrypt.hash(req.body.password, 10);
+  }
+
+  const parcialUserRegister = {
+    email: req.body.email,
+    password: passwordCrypt
+  };
+
+  try {
+    const register = await users.create(parcialUserRegister);
+    res.status(201).json({
+      status: "201",
+      dataApi: register,
+      message: "El registro parcial a sido creado"
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+/* Completar registro por Email */
+const signupCompleteFromEmail = async (req, res) => {
+  console.log(req.body)
+  const userIncomplete = await users.findOne({ where: { email: req.body.email } });
+  if (!userIncomplete) {
+    return res.status(404).json({
+      status: "404",
+      message: "El email indicado no está pre registrado"
+    });
+  };
+
+  const updateNewUser = {
+    name: req.body.name,
+    lastname: req.body.lastname,
+    email: userIncomplete.email,
+    password: userIncomplete.password,
+    address: req.body.address,
+    phone: req.body.phone,
+    city: req.body.city,
+    role: req.body.role,
+    status: req.body.status,
+    avatar: req.body.urlImageAvatar
+  };
+
+  try {
+    const userUpdate = await userIncomplete.update(updateNewUser);
+    res.status(200).json({
+      dataApi: userUpdate,
+      message: "El registro fue completado con éxito"
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+/* Registrar con Google */
 const signupUserGoogle = async (req, res) => {
   const user = await users.findOne({ where: { email: req.body.emailGoogle } });
   if (user) {
@@ -148,13 +216,14 @@ const signupUserGoogle = async (req, res) => {
     res.status(201).json({
       status: "201",
       dataApi: register,
-      message: "El registro parcial fue creado"
+      message: "El registro parcial a sido creado"
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
+/* Completar Registro */
 const signupComplete = async (req, res) => {
   const userIncomplete = await users.findOne({ where: { email: req.body.emailGoogle } });
   if (!userIncomplete) {
@@ -346,6 +415,8 @@ module.exports = {
   delUser,
   compareUser,
   addUser,
+  signupUserEmail,
+  signupCompleteFromEmail,
   signupUserGoogle,
   signupComplete,
   updateUser,
