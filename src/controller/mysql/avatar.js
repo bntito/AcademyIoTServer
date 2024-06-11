@@ -3,7 +3,7 @@ const { Sequelize } = require('sequelize');
 const userAvatar = async (req, res) => {
   let filePath = '';
   if (req.file) {
-    filePath = `/avatar/user/${req.file.filename}`;
+    filePath = `avatar/user/${req.file.filename}`;
   }
   res.send({
     status: "200",
