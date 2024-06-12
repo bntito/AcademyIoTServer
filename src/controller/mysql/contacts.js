@@ -52,15 +52,6 @@ const delContact = async (req, res) => {
 
 /* Agregar registro */
 const addContact = async (req, res) => {
-  // const existItem = await contacts.findOne({ where: { dni: req.body.dni } });
-  // if (existItem) {
-  //   return res
-  //     .status(400)
-  //     .json({
-  //       message: "El DNI indicado ya está registrado"
-  //     });
-  // }
-
   const newContact = {
     name: req.body.name,
     email: req.body.email,
