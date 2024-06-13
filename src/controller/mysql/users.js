@@ -65,7 +65,7 @@ const compareUser = async (req, res) => {
       status: '400',
       message: 'El usuario logeado no corresponde con la información indicada'
     });
-  };
+  }
   const match = await bcrypt.compare(req.body.password, user.password);
   if (!match) {
     return res.status(400).json({
@@ -77,7 +77,7 @@ const compareUser = async (req, res) => {
       status: '200',
       message: 'Contraseña correcta'
     });
-  };
+  }
 };
 
 /* Agregar registro */
@@ -88,7 +88,7 @@ const addUser = async (req, res) => {
       status: '400',
       message: 'El email indicado ya está registrado'
     });
-  };
+  }
 
   let passwordCrypt = '';
   if (req.body.password) {
@@ -136,7 +136,7 @@ const signupUserEmail = async (req, res) => {
       status: "400",
       message: "Cuenta de Correo Google ya registrada"
     });
-  };
+  }
 
   let passwordCrypt = '';
   if (req.body.password) {
@@ -169,7 +169,7 @@ const signupCompleteFromEmail = async (req, res) => {
       status: "404",
       message: "El email indicado no está pre registrado"
     });
-  };
+  }
 
   const updateNewUser = {
     name: req.body.name,
@@ -203,7 +203,7 @@ const signupUserGoogle = async (req, res) => {
       status: "400",
       message: "Cuenta de Correo Google ya registrada"
     });
-  };
+  }
 
   const parcialUserRegister = {
     name: req.body.nameGoogle,
@@ -232,7 +232,7 @@ const signupComplete = async (req, res) => {
       status: "404",
       message: "El email indicado no está pre registrado"
     });
-  };
+  }
 
   let passwordCrypt = '';
   if (req.body.password) {
@@ -306,7 +306,7 @@ const loginUser = async (req, res) => {
       status: '400',
       message: 'El email indicado no está registrado'
     });
-  };
+  }
   const match = await bcrypt.compare(req.body.password, user.password);
   if (!match) {
     return res.status(400).json({
@@ -331,7 +331,7 @@ const loginUser = async (req, res) => {
       dataApi: newRegister,
       message: `Login exitoso \n Bienvenido ${user.name} ${user.lastname}`
     });
-  };
+  }
 };
 
 /* Login de usuarios con google */
@@ -361,7 +361,7 @@ const loginUserGoogle = async (req, res) => {
       dataApi: newRegister,
       message: `Login exitoso \n Bienvenido ${user.name} ${user.lastname}`
     });
-  };
+  }
 };
 
 /* Cambio de contraseña de usuarios */

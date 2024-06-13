@@ -61,7 +61,7 @@ const addUser = async (req, res) => {
       status: '400',
       message: 'El email indicado ya está registrado'
     });
-  };
+  }
   let passwordCrypt = '';
   if (req.body.password) {
     passwordCrypt = await bcrypt.hash(req.body.password, 10);
@@ -137,7 +137,7 @@ const loginUser = async (req, res) => {
       status: '400',
       message: 'El email indicado no está registrado'
     });
-  };
+  }
   const match = await bcrypt.compare(req.body.password, user.password);
   if (!match) {
     return res.status(400).json({
@@ -209,7 +209,7 @@ const changePassword = async (req, res) => {
       status: '401',
       message: 'No se proporcionó ningún Token'
     });
-  };
+  }
 };
 
 module.exports = {

@@ -36,7 +36,7 @@ const {
 
 router.get('/users', getUsers);
 router.get('/user/:id', getUser);
-router.delete('/user/:id', delUser);
+router.delete('/user/:id', isAuthenticated, isRole('isAdmin'), delUser);
 router.post('/users/:id', compareUser);
 router.post('/user', addUser);
 router.post('/user/signupemail', signupUserEmail);

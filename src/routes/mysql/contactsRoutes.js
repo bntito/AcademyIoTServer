@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { isAuthenticated, isRole } = require('../../middleware/auth');
 
 const {
   getContacts,
@@ -11,8 +12,8 @@ const {
 
 router.get('/contacts', getContacts);
 router.get('/contact/:id', getContact);
-router.delete('/contact/:id', delContact);
+router.delete('/contact/:id', isAuthenticated, isRole('isAdmin'), delContact);
 router.post('/contact', addContact);
-router.put('/contact/:id', updateContact);
+router.put('/contact/:id', isAuthenticated, isRole('isAdmin'), updateContact);
 
 module.exports = router;

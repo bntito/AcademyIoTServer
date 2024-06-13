@@ -14,7 +14,7 @@ const {
 router.get('/professors', getProfessors);
 router.get('/professor/:id', getProfessor);
 router.get('/professor/dni/:dni', getProfessorDni);
-router.delete('/professor/:id', isAuthenticated, isRole(['isAdmin', 'isTeacher']), delProfessor);
+router.delete('/professor/:id', isAuthenticated, isRole('isAdmin'), delProfessor);
 router.post('/professor', isAuthenticated, isRole(['isAdmin', 'isTeacher']), addProfessor);
 router.put('/professor/:id', isAuthenticated, isRole(['isAdmin', 'isTeacher']), updateProfessor);
 
