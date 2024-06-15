@@ -7,12 +7,14 @@ require('dotenv').config({
 });
 console.log('Ejcutando en:', process.env.NODE_ENV);
 
+// Variables para la configuración de la base de datos
 let port = '';
 let host = '';
 let user = '';
 let password = '';
 let database = '';
 
+// Configuración de las variables según el entorno
 if (process.env.NODE_ENV  === 'Desarrollo') {
   port = process.env.DB_PORT;
   host = process.env.DB_HOST;
@@ -28,14 +30,17 @@ if (process.env.NODE_ENV  === 'Producción') {
   database = process.env.DB_DATABASE_PROD;
 };
 
+// Configuración del tipo de base de datos
 const typeDB = "mysql"
 const dialect = typeDB;
 
+// Configuración del pool de conexiones
 const pool = {
   max: 30,
   min: 0,
 };
 
+// Exporta la configuración para su uso en otros archivos
 module.exports = {
   port,
   host,

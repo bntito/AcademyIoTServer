@@ -109,15 +109,15 @@ const addUser = async (req, res) => {
 
   try {
     const register = await users.create(newUsers);
-    // await sendMail({
-    //   email: newUsers.email,
-    //   subject: `Bienvenido ${newUsers.name} ${newUsers.lastname}, ¡Te haz registrado con éxito!`,
-    //   message: `¡Hola ${newUsers.name}!,<br><br>` +
-    //   `¡Es un placer darle la bienvenida a nuestra comunidad! 🌟<br>` +
-    //   `Estamos emocionados de tenerte con nosotros y queremos agradecerte por unirte a nuestra plataforma.<br><br>` +
-    //   `Nos comunicaremos a tu teléfono ${newUsers.phone} o a tu correo eletrónico ${newUsers.email}.<br><br>` +
-    //   `Saludos cordiales,<br>El equipo de Academia IoT`
-    // });
+    await sendMail({
+      email: newUsers.email,
+      subject: `Bienvenido ${newUsers.name} ${newUsers.lastname}, ¡Te haz registrado con éxito!`,
+      message: `¡Hola ${newUsers.name}!,<br><br>` +
+      `¡Es un placer darle la bienvenida a nuestra comunidad! 🌟<br>` +
+      `Estamos emocionados de tenerte con nosotros y queremos agradecerte por unirte a nuestra plataforma.<br><br>` +
+      `Nos comunicaremos a tu teléfono ${newUsers.phone} o a tu correo eletrónico ${newUsers.email}.<br><br>` +
+      `Saludos cordiales,<br>El equipo de Academia IoT`
+    });
     res.status(201).json({
       status: "201",
       dataApi: register,

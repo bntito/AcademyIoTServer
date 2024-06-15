@@ -1,5 +1,6 @@
 const nodemailer = require('nodemailer');
 
+// Función para enviar un correo electrónico
 exports.sendMail = async (options) => {
   try {
     let transporter = nodemailer.createTransport({
@@ -14,6 +15,7 @@ exports.sendMail = async (options) => {
         rejectUnauthorized: false
       }
     });
+    // Configura las opciones del correo
     const mailOptions = {
       from: process.env.SMTP_MAIL,
       to: options.email,
