@@ -186,6 +186,15 @@ const signupCompleteFromEmail = async (req, res) => {
 
   try {
     const userUpdate = await userIncomplete.update(updateNewUser);
+    await sendMail({
+      email: updateNewUser.email,
+      subject: `Bienvenido ${updateNewUser.name} ${updateNewUser.lastname}, ¡Te haz registrado con éxito!`,
+      message: `¡Hola ${updateNewUser.name}!,<br><br>` +
+      `¡Es un placer darle la bienvenida a nuestra comunidad! 🌟<br>` +
+      `Estamos emocionados de tenerte con nosotros y queremos agradecerte por unirte a nuestra plataforma.<br><br>` +
+      `Nos comunicaremos a tu teléfono ${updateNewUser.phone} o a tu correo eletrónico ${updateNewUser.email}.<br><br>` +
+      `Saludos cordiales,<br>El equipo de Academia IoT`
+    });
     res.status(200).json({
       dataApi: userUpdate,
       message: "El registro fue completado con éxito"
@@ -254,6 +263,15 @@ const signupComplete = async (req, res) => {
 
   try {
     const userUpdate = await userIncomplete.update(updateNewUser);
+    await sendMail({
+      email: updateNewUser.email,
+      subject: `Bienvenido ${updateNewUser.name} ${updateNewUser.lastname}, ¡Te haz registrado con éxito!`,
+      message: `¡Hola ${updateNewUser.name}!,<br><br>` +
+      `¡Es un placer darle la bienvenida a nuestra comunidad! 🌟<br>` +
+      `Estamos emocionados de tenerte con nosotros y queremos agradecerte por unirte a nuestra plataforma.<br><br>` +
+      `Nos comunicaremos a tu teléfono ${updateNewUser.phone} o a tu correo eletrónico ${updateNewUser.email}.<br><br>` +
+      `Saludos cordiales,<br>El equipo de Academia IoT`
+    });
     res.status(200).json({
       dataApi: userUpdate,
       message: "El registro fue completado con éxito"
